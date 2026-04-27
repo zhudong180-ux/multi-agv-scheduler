@@ -1,0 +1,7 @@
+numpy
+scipy
+matplotlib
+networkx
+pyyaml
+ortools
+tqdm
