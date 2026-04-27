@@ -3,10 +3,21 @@ from typing import Tuple
 
 from core.map_graph import GridMap
 from planner.astar import AStarPlanner
+from planner.dijkstra import DijkstraPlanner
 
 
 def parse_position(values) -> Tuple[int, int]:
     return int(values[0]), int(values[1])
+
+
+def build_planner(planner_name: str, grid_map: GridMap):
+    if planner_name == "astar":
+        return AStarPlanner(grid_map)
+
+    if planner_name == "dijkstra":
+        return DijkstraPlanner(grid_map)
+
+    raise ValueError(f"Unsupported planner: {planner_name}")
 
 
 def main():
@@ -25,7 +36,7 @@ def main():
         "--planner",
         type=str,
         default="astar",
-        choices=["astar"],
+        choices=["astar", "dijkstra"],
         help="Path planner type."
     )
 
@@ -51,12 +62,7 @@ def main():
     goal = parse_position(args.goal)
 
     grid_map = GridMap.from_json(args.map)
-
-    if args.planner == "astar":
-        planner = AStarPlanner(grid_map)
-    else:
-        raise ValueError(f"Unsupported planner: {args.planner}")
-
+    planner = build_planner(args.planner, grid_map)
     path = planner.plan(start, goal)
 
     print(f"planner: {args.planner}")
